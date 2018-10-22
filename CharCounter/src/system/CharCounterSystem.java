@@ -10,7 +10,7 @@ public class CharCounterSystem {
 		System.out.println("Reading...");
 		//histogram.convertValue(reader.readFile(url));
 		reader.stringReader("Test Text");
-		System.out.println("...finished");
+		System.out.println("...finished!");
 	}
 
 }
