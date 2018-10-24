@@ -18,36 +18,46 @@ public class Reader {
 		scanner = new Scanner(System.in);
 	}
 	
-	public String readLine() {
-		this.text = this.scanner.nextLine();
-		return this.text;
+	public ArrayList<String> readString(String text) {
+//		ArrayList<Integer> charList = new ArrayList<>();
+//		StringReader reader= new StringReader(text);
+//		int data;
+//		try {
+//			data = reader.read();
+//			while(data != -1) {
+//				  charList.add(data);
+//				  data = reader.read();
+//			}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return charList;
+		ArrayList<String> line = new ArrayList<>();
+		line.add(text);
+		return line;
 	}
 	
-	public ArrayList<Integer> stringReader(String text) {
-		ArrayList<Integer> charList = new ArrayList<>();
-		StringReader reader= new StringReader(text);
-		int data;
-		try {
-			data = reader.read();
-			while(data != -1) {
-				  charList.add(data);
-				  data = reader.read();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return charList;
-	}
-	
-	public String readFile(String filePath){
-	    StringBuilder contentBuilder = new StringBuilder();
-	    try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)){
-	        stream.forEach(s -> contentBuilder.append(s).append(""));
+	public ArrayList<String> readFile(String filePath){
+		ArrayList<String> lines = new ArrayList<>();
+		
+//	    StringBuilder contentBuilder = new StringBuilder();
+//	    try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)){
+//	        stream.forEach(s -> contentBuilder.append(s).append(""));
+//	    }
+//	    catch (IOException e){
+//	        e.printStackTrace();
+//	    }
+//	    return contentBuilder.toString();
+	    
+		try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)){
+	        stream.forEach(s -> lines.add(s));
 	    }
 	    catch (IOException e){
 	        e.printStackTrace();
 	    }
-	    return contentBuilder.toString();
+	    return lines;
 	}
+	
+	
 }

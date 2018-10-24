@@ -6,13 +6,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Histogram {
 	private int[] frequencyUpper;
 	private int[] frequencyLower;
 	private int diffOfCharLower = 97;
 	private int diffOfCharUpper = 65;
+	private int lowestKey = 0;
 	
 	public Histogram() {
 		super();
@@ -20,8 +26,9 @@ public class Histogram {
 		this.frequencyLower = new int[26];
 	}
 	
-	public void convertValue(String value) {
-		char text [] = value.toCharArray();
+	public void convertLines(ArrayList<String> lines) {
+		String s = lines.stream().map(e-> e.toString()).reduce("", String::concat);
+		char text [] = s.toCharArray();
 		for(int i =0;i<text.length;i++) {
 			int index = this.charToIndex(text[i]);
 			if(index >=97 && index<=122) {
@@ -32,6 +39,91 @@ public class Histogram {
 		}
 		printFrequency();
 		writeFrequency();
+	}
+	
+	public int count(String object) {
+		int countLower=0;
+		int countUpper=0;
+		if(object=="lower") {
+			for(int i = 0;i<this.frequencyLower.length;i++) {
+				countLower+=this.frequencyLower[i];
+			}
+			return countLower;
+		}else if(object=="upper") {
+			for(int i = 0;i<this.frequencyUpper.length;i++) {
+				countUpper+=this.frequencyUpper[i];
+			}
+			return countUpper;
+		}else {
+			return countUpper+countLower;
+		}
+		
+		
+	}
+	
+	public ArrayList<ArrayList<Integer>> calcMostFrequent(int freqArr[],int diffOfChar) {
+		Map<Integer,Integer> frequent = new HashMap<>();
+		for(int i=0;i<freqArr.length;i++) {
+			int count = freqArr[i];
+			int character = i+diffOfChar;
+			if(freqArr[i]!=0) {
+				if(frequent.size()<=4) {
+					frequent.put(character, count);
+				}else {
+					for (Integer key : frequent.keySet()) {
+						int value = frequent.get(key);
+						if(value<count) {
+							if(this.lowestKey==0) {
+								this.lowestKey=key;
+							}else if(value<freqArr[this.lowestKey-diffOfChar]){
+								this.lowestKey=key;
+							}						
+						}
+					}
+					if(this.lowestKey!=0) {
+						frequent.remove(this.lowestKey);
+						frequent.put(character, count);
+						this.lowestKey=0;
+					}
+				}
+			}
+		}
+		System.out.println(frequent.toString());
+		return sortMostFrequent(frequent);
+	}
+	
+	public ArrayList<ArrayList<Integer>> sortMostFrequent(Map<Integer, Integer> frequent){
+		ArrayList<ArrayList<Integer>> sortedList = new ArrayList<>();
+		for (Integer key : frequent.keySet()) {
+			int value = frequent.get(key);
+			sortedList.add(new ArrayList<Integer>(Arrays.asList(key,value)));
+		}
+		Collections.sort(sortedList,(a,b)->b.get(1).compareTo(a.get(1)));
+		return sortedList;
+	}
+	
+	public void calculateStars(){
+		
+	}
+	
+	public String printMostFrequent() {
+		ArrayList<ArrayList<Integer>> list = this.calcMostFrequent(this.frequencyLower,this.diffOfCharLower);
+		String mostFrequent="";
+		int count = this.count("lower");
+		double partPercentage=0;
+		for(ArrayList<Integer> item: list) {
+			partPercentage += ((double) item.get(1)/count)*50;
+		}
+		
+		for(ArrayList<Integer> item: list) {
+			String stars="";
+			int part = (int) ((item.get(1)/((partPercentage*count)/100))/0.1);
+			for(int i =0;i<=part;i++) {
+				stars+="*";
+			}
+			mostFrequent+=this.indexToChar(item.get(0))+" -> "+stars+"("+(float)item.get(1)/count*100+"%)"+"\n";
+		}
+		return mostFrequent;
 	}
 	
 	public void printFrequency() {
@@ -47,17 +139,19 @@ public class Histogram {
 	
 	public void writeFrequency() {
 		String url = "C:/Users/justi/WorkspaceEclipse/CharCounter/bin/frequency.txt";
-		List<String> linesUpper = new ArrayList<>();
+		List<String> lines = new ArrayList<>();
 		for(int i=0;i<this.frequencyUpper.length;i++) {
-			linesUpper.add(
-				indexToChar(i+this.diffOfCharUpper)+" -> "+this.frequencyUpper[i]+"\t\t\t"+
+			lines.add(
+				indexToChar(i+this.diffOfCharUpper)+" -> "+this.frequencyUpper[i]+"\t\t\t\t"+
 				indexToChar(i+this.diffOfCharLower)+" -> "+this.frequencyLower[i]
 						
 			);
 		}
+		lines.add("count: "+this.count("all"));
+		lines.add("most frequent:\n"+this.printMostFrequent());
 		Path file = Paths.get(url);
 		try {
-			Files.write(file, linesUpper, Charset.forName("UTF-8"));
+			Files.write(file, lines, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,9 +164,5 @@ public class Histogram {
 	
 	public char indexToChar(int index) {
 		return (char)index;
-	}
-	
-	public void clearFrequency() {
-		
 	}
 }
