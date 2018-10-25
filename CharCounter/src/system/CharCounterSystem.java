@@ -3,7 +3,6 @@ package system;
 public class CharCounterSystem {
 	private static Reader reader = new Reader();
 	private static Histogram histogram = new Histogram();
-	private static Boolean active = true;
 	//change directory of file in order to use this feature
 	private static String url = "C:/Users/justi/WorkspaceEclipse/CharCounter/bin/file.txt";
 	

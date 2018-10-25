@@ -21,5 +21,14 @@ class HistogramTest {
 		assertEquals(4,histogram.count("all"));
 	}
 	
+//	@Test
+//	void testFrequency() {
+//		int diff = histogram.getDiffOfLower();
+//		ArrayList<String> text = reader.readString("test");
+//		int[] freqLower = histogram.getFreqLower();
+//		this.histogram.convertLines(text);
+//		this.histogram.writeFrequency();
+//		
+//	}
 	
 }

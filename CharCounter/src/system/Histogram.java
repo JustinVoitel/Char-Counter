@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,14 +25,22 @@ public class Histogram {
 		this.frequencyLower = new int[26];
 	}
 	
+	public int[] getFreqLower() {
+		return this.frequencyLower;
+	}
+	
+	public int getDiffOfLower() {
+		return this.diffOfCharLower;
+	}
+	
 	public void convertLines(ArrayList<String> lines) {
 		String s = lines.stream().map(e-> e.toString()).reduce("", String::concat);
 		char text [] = s.toCharArray();
 		for(int i =0;i<text.length;i++) {
 			int index = this.charToIndex(text[i]);
-			if(index >=97 && index<=122) {
+			if(index >=this.diffOfCharLower && index<=this.diffOfCharLower+this.frequencyLower.length-1) {
 				this.frequencyLower[index-this.diffOfCharLower]++;
-			} else if(index >=65 && index<=90){
+			} else if(index >=this.diffOfCharUpper && index<=this.diffOfCharUpper+this.frequencyUpper.length-1){
 				this.frequencyUpper[index-this.diffOfCharUpper]++;
 			}
 		}
@@ -44,21 +51,18 @@ public class Histogram {
 	public int count(String object) {
 		int countLower=0;
 		int countUpper=0;
+		for(int i = 0;i<this.frequencyUpper.length;i++) {
+			countUpper+=this.frequencyUpper[i];
+		}
+		for(int i = 0;i<this.frequencyLower.length;i++) {
+			countLower+=this.frequencyLower[i];
+		}
 		if(object=="lower") {
-			for(int i = 0;i<this.frequencyLower.length;i++) {
-				countLower+=this.frequencyLower[i];
-			}
 			return countLower;
 		}else if(object=="upper") {
-			for(int i = 0;i<this.frequencyUpper.length;i++) {
-				countUpper+=this.frequencyUpper[i];
-			}
 			return countUpper;
-		}else {
-			return countUpper+countLower;
 		}
-		
-		
+		return countUpper+countLower;
 	}
 	
 	public ArrayList<ArrayList<Integer>> calcMostFrequent(int freqArr[],int diffOfChar) {
@@ -66,7 +70,7 @@ public class Histogram {
 		for(int i=0;i<freqArr.length;i++) {
 			int count = freqArr[i];
 			int character = i+diffOfChar;
-			if(freqArr[i]!=0) {
+			if(count!=0) {
 				if(frequent.size()<=4) {
 					frequent.put(character, count);
 				}else {
@@ -102,17 +106,13 @@ public class Histogram {
 		return sortedList;
 	}
 	
-	public void calculateStars(){
-		
-	}
-	
 	public String printMostFrequent() {
 		ArrayList<ArrayList<Integer>> list = this.calcMostFrequent(this.frequencyLower,this.diffOfCharLower);
 		String mostFrequent="";
 		int count = this.count("lower");
 		double partPercentage=0;
 		for(ArrayList<Integer> item: list) {
-			partPercentage += ((double) item.get(1)/count)*50;
+			partPercentage += ((double) item.get(1)/count)*100;
 		}
 		
 		for(ArrayList<Integer> item: list) {
@@ -143,8 +143,7 @@ public class Histogram {
 		for(int i=0;i<this.frequencyUpper.length;i++) {
 			lines.add(
 				indexToChar(i+this.diffOfCharUpper)+" -> "+this.frequencyUpper[i]+"\t\t\t\t"+
-				indexToChar(i+this.diffOfCharLower)+" -> "+this.frequencyLower[i]
-						
+				indexToChar(i+this.diffOfCharLower)+" -> "+this.frequencyLower[i]		
 			);
 		}
 		lines.add("count: "+this.count("all"));
