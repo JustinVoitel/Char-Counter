@@ -33,7 +33,7 @@ public class Histogram {
 		return this.diffOfCharLower;
 	}
 	
-	public void convertLines(ArrayList<String> lines) {
+	public void convertLines(ArrayList<String> lines) { 
 		String s = lines.stream().map(e-> e.toString()).reduce("", String::concat);
 		char text [] = s.toCharArray();
 		for(int i =0;i<text.length;i++) {
@@ -92,7 +92,7 @@ public class Histogram {
 				}
 			}
 		}
-		System.out.println(frequent.toString());
+
 		return sortMostFrequent(frequent);
 	}
 	
@@ -117,7 +117,7 @@ public class Histogram {
 		
 		for(ArrayList<Integer> item: list) {
 			String stars="";
-			int part = (int) ((item.get(1)/((partPercentage*count)/100))/0.1);
+			int part = (int) ((item.get(1)/((partPercentage*count)/100))/0.05);
 			for(int i =0;i<=part;i++) {
 				stars+="*";
 			}

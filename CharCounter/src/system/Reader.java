@@ -24,6 +24,7 @@ public class Reader {
 	
 	public ArrayList<String> readFile(String filePath){
 		ArrayList<String> lines = new ArrayList<>();
+		
 		try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)){
 	        stream.forEach(s -> lines.add(s));
 	    }
