@@ -2,6 +2,7 @@ package system;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class Histogram {
 	private int[] frequencyUpper;
@@ -33,18 +35,44 @@ public class Histogram {
 		return this.diffOfCharLower;
 	}
 	
-	public void convertLines(ArrayList<String> lines) { 
-		String s = lines.stream().map(e-> e.toString()).reduce("", String::concat);
-		char text [] = s.toCharArray();
-		for(int i =0;i<text.length;i++) {
-			int index = this.charToIndex(text[i]);
-			if(index >=this.diffOfCharLower && index<=this.diffOfCharLower+this.frequencyLower.length-1) {
-				this.frequencyLower[index-this.diffOfCharLower]++;
-			} else if(index >=this.diffOfCharUpper && index<=this.diffOfCharUpper+this.frequencyUpper.length-1){
-				this.frequencyUpper[index-this.diffOfCharUpper]++;
-			}
-		}
-		printFrequency();
+	public void convertLines(String url) {
+		try (Stream<String> stream = Files.lines( Paths.get(url), StandardCharsets.UTF_8)){
+			stream.forEach(e->{
+				char charArr[] = e.replaceAll("[^A-Za-z]+", "").toCharArray();
+				for(int i =0;i<charArr.length;i++) {
+					int index = this.charToIndex(charArr[i]);
+					if(index >=this.diffOfCharLower && index<=this.diffOfCharLower+this.frequencyLower.length-1) {
+						this.frequencyLower[index-this.diffOfCharLower]++;
+					} else if(index >=this.diffOfCharUpper && index<=this.diffOfCharUpper+this.frequencyUpper.length-1){
+						this.frequencyUpper[index-this.diffOfCharUpper]++;
+					}
+				}
+			});
+			
+	    }
+	    catch (IOException e){
+	        e.printStackTrace();
+	    }
+//		String s = lines.stream().map(e-> e.toString()).reduce("", String::concat);
+//		char text [] = s.toCharArray();
+//		stream.forEach(e->{
+//			e.replaceAll("[^A-Za-z]+", "").toCharArray();
+//			for(int i =0;i<e.length();i++) {
+//				int index = this.charToIndex(text[i]);
+//				if(index >=this.diffOfCharLower && index<=this.diffOfCharLower+this.frequencyLower.length-1) {
+//					this.frequencyLower[index-this.diffOfCharLower]++;
+//				} else if(index >=this.diffOfCharUpper && index<=this.diffOfCharUpper+this.frequencyUpper.length-1){
+//					this.frequencyUpper[index-this.diffOfCharUpper]++;
+//				}
+//			}
+//			System.out.println(e);
+//		});
+//		stream.forEach(e->System.out.println(e));
+			
+			
+    	
+		
+//		printFrequency();
 		writeFrequency();
 	}
 	
@@ -138,7 +166,8 @@ public class Histogram {
 	}
 	
 	public void writeFrequency() {
-		String url = "C:/Users/justi/WorkspaceEclipse/CharCounter/bin/frequency.txt";
+		String url2 = "C:\\Users\\justi\\git\\Char-Counter\\CharCounter\\bin\\frequency.txt";
+
 		List<String> lines = new ArrayList<>();
 		for(int i=0;i<this.frequencyUpper.length;i++) {
 			lines.add(
@@ -148,7 +177,7 @@ public class Histogram {
 		}
 		lines.add("count: "+this.count("all"));
 		lines.add("most frequent:\n"+this.printMostFrequent());
-		Path file = Paths.get(url);
+		Path file = Paths.get(url2);
 		try {
 			Files.write(file, lines, Charset.forName("UTF-8"));
 		} catch (IOException e) {

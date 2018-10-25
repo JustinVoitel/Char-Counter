@@ -17,7 +17,7 @@ class HistogramTest {
 	@Test
 	void testLines() {
 		ArrayList<String> text = reader.readString("test");
-		this.histogram.convertLines(text);
+		//this.histogram.convertLines(text);
 		assertEquals(4,histogram.count("all"));
 	}
 	

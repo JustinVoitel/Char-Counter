@@ -22,15 +22,13 @@ public class Reader {
 		return line;
 	}
 	
-	public ArrayList<String> readFile(String filePath){
-		ArrayList<String> lines = new ArrayList<>();
-		
+	public Stream<String> readFile(String filePath){
 		try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)){
-	        stream.forEach(s -> lines.add(s));
+			return stream;
 	    }
 	    catch (IOException e){
 	        e.printStackTrace();
 	    }
-	    return lines;
+	    return null;
 	}
 }
